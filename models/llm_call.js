@@ -12,7 +12,7 @@ const system_prompts = {
     dino_response: "You are a friendly assistant that replies to what you are told like a good friend"
 }
 
-function message_body(system_content, user_content) {
+function create_message_body(system_content, user_content) {
     return {
         messages: [
             {
@@ -25,16 +25,6 @@ function message_body(system_content, user_content) {
             },
         ],
     }
-}
-
-function summary_message_body(user_content) {
-    const system_content = "You are a friendly assistant that helps summarize what you are told into bullet points like a journal.";
-    return message_body(system_content, user_content);
-}
-
-function response_message_body(user_content) {
-    const system_content = "You are a friendly assistant that replies to what you are told like a good friend.";
-    return message_body(system_content, user_content);
 }
 
 /// Functions for querying llms ///
@@ -90,16 +80,16 @@ async function wav_to_text(wav_path) {
 }
 
 async function text_to_summary(user_speech) {
-    const message_body = summary_message_body(user_speech);
-    console.log(message_body);
+    const message_body = create_message_body(system_prompts.journal_entry, user_speech);
+    // console.log(message_body);
     const summary = await run_llm(`@${llm_model}`, message_body);
 
-    console.log(summary)
+    // console.log(summary)
     if (!summary.success) {
         return [summary.errors, undefined];
     }
 
-    return [undefined, summary.response];
+    return [undefined, summary.result.response];
 }
 
 async function handle_async_err([err, res]) {
@@ -131,4 +121,23 @@ async function test_full_pipeline() {
     console.log(await full_pipeline(wavFilePath));
 }
 
-test_full_pipeline();
+/**
+ * This function will use 3 prompts from ChatGPT and test how the LLM turns it into a journal entry.
+ */
+async function test_gpt_prompts(){
+    const prompts = [
+        "Today was a whirlwind of activity and emotions. I started the morning with a to-do list that seemed never-ending, but by the evening, I managed to check off the major tasks. The highlight was completing the project presentation that had been looming over me all week. The sense of accomplishment is overwhelming, and I can finally exhale. However, there were a couple of things I couldn't get to – an email I meant to send and a chapter I wanted to read for personal development. It's a reminder that there's always room for improvement in time management. Despite the minor setbacks, I'm choosing to focus on the victories and look forward to tackling the remaining tasks tomorrow.",
+        "Spent the day balancing work and personal life, and it was both rewarding and challenging. Managed to meet a tight deadline at work, but it meant sacrificing some of my planned self-care time. The compromise left me a bit drained, yet the sense of accomplishment is undeniable. In the evening, I had a heart-to-heart conversation with a friend, sharing our highs and lows. It was therapeutic and a reminder of the importance of human connection. Unfortunately, I didn't get to my daily workout routine, and that's okay. Tomorrow is another opportunity to prioritize physical health. Overall, a day of trade-offs and lessons learned.",
+        "Today was filled with unexpected twists and turns. Started the day with a positive mindset, but a sudden change in plans threw me off. Despite the challenges, I embraced the spontaneity and found joy in the unpredictability. Work was a mix of setbacks and achievements – a project meeting went smoothly, but a technical glitch caused some delays. I didn't get around to finishing the research for a personal writing project, and that's disappointing. However, I'm choosing to view it as a chance to dive deeper tomorrow. In the evening, I took a spontaneous walk in the rain, letting go of the day's stressors. Today taught me the importance of flexibility and resilience, and I'm grateful for the opportunities to learn and grow."
+    ]
+
+    for (prompt of prompts){
+        console.log(`Prompt:\n\t${prompt}`)
+        const summary = await handle_async_err(await text_to_summary(prompt));
+        console.log(`\nResponse:\n\t${summary}`)
+        console.log("\n")
+    }
+}
+
+// test_full_pipeline();
+test_gpt_prompts();
