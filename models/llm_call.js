@@ -71,7 +71,7 @@ async function wav_to_text(wav_path) {
     const wav_file = fs.readFileSync(wav_path);
     const converted_text = await run_speech2text(`@${speech_2_text_model}`, wav_file);
 
-    console.log(converted_text);
+    // console.log(converted_text);
     if (!converted_text.success) {
         return [converted_text.errors, undefined];
     }
@@ -87,8 +87,8 @@ async function llm_call_response(summary){
     return [undefined, summary.result.response];
 }
 
-async function text_to_summary(user_speech) {
-    const message_body = create_message_body(system_prompts.journal_entry, user_speech);
+async function query_llm(system_prompt, user_speech) {
+    const message_body = create_message_body(system_prompt, user_speech);
     // console.log(message_body);
     const summary = await run_llm(`@${llm_model}`, message_body);
 
@@ -99,7 +99,7 @@ async function text_to_summary(user_speech) {
 
 async function handle_async_err([err, res]) {
     if (err) {
-        throw err;
+        return err;
     }
 
     return res;
@@ -108,16 +108,16 @@ async function handle_async_err([err, res]) {
 async function full_pipeline(wav_path) {
     const extracted_text = await handle_async_err(await wav_to_text(wav_path));
 
-    const summary = await handle_async_err(await text_to_summary(extracted_text));
+    const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, extracted_text));
 
     return summary;
 }
 
-// test_speech2text();
+/// Testing functions ///
 
 async function test_journal_entry() {
     const journal_speech = "My day was full of fun! I went to a hackathon and made the best project ever with my friends! We won first place and got a nintendo switch as a prize.";
-    const journal_entry = await text_to_summary(journal_speech);
+    const journal_entry = await handle_async_err(await query_llm(system_prompts.journal_entry, journal_speech));
     console.log(journal_entry);
 }
 
@@ -138,11 +138,13 @@ async function test_gpt_prompts(){
 
     for (prompt of prompts){
         console.log(`Prompt:\n\t${prompt}`)
-        const summary = await handle_async_err(await text_to_summary(prompt));
+        const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, prompt));
         console.log(`\nResponse:\n\t${summary}`)
         console.log("\n")
     }
 }
 
+/// Testing Area ///
+// test_journal_entry();
 // test_full_pipeline();
 test_gpt_prompts();
