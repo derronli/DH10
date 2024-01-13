@@ -79,18 +79,23 @@ async function wav_to_text(wav_path) {
     return [undefined, converted_text.result.text];
 }
 
-async function text_to_summary(user_speech) {
-    const message_body = create_message_body(system_prompts.journal_entry, user_speech);
-    // console.log(message_body);
-    const summary = await run_llm(`@${llm_model}`, message_body);
-
-    // console.log(summary)
+async function llm_call_response(summary){
     if (!summary.success) {
         return [summary.errors, undefined];
     }
 
     return [undefined, summary.result.response];
 }
+
+async function text_to_summary(user_speech) {
+    const message_body = create_message_body(system_prompts.journal_entry, user_speech);
+    // console.log(message_body);
+    const summary = await run_llm(`@${llm_model}`, message_body);
+
+    // console.log(summary)
+    return await llm_call_response(summary);
+}
+
 
 async function handle_async_err([err, res]) {
     if (err) {
