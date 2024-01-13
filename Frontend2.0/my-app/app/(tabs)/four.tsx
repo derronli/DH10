@@ -1,31 +1,44 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import EditScreenInfo from "../../components/EditScreenInfo";
+import { Text, View } from "../../components/Themed";
 
 export default function TabTwoScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Three</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/three.tsx" />
+    <View>
+      <View>
+        <View style={styles.boxContainer}>
+          <View style={styles.box1}>
+            <View>
+              <Text>ASDASD</Text>
+            </View>
+          </View>
+          <View style={styles.box2}>
+            <Text>
+              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+              Repudiandae laudantium ipsum ab possimus esse maxime atque,
+              dolorum et tempora porro harum quas laboriosam excepturi suscipit
+              voluptas vero sint consequatur eligendi.
+            </Text>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  boxContainer: {
+    flexDirection: "row",
+  },
+  box1: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    marginHorizontal: 10,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  box2: {
+    flex: 1,
+    backgroundColor: "#FF0000",
+    marginHorizontal: 10,
   },
 });
