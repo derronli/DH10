@@ -3,9 +3,9 @@ import { StyleSheet } from "react-native";
 
 import { Text, View } from "./Themed";
 
-const JournalEntry = () => {
+const JournalEntry = ({ colour }) => {
   return (
-    <View style={styles.box1}>
+    <View style={[styles.box1, { backgroundColor: colour }]}>
       <View style={styles.textbox}>
         <Text style={styles.heading}>Bad Day</Text>
         <Text style={styles.note}>
@@ -20,7 +20,6 @@ const JournalEntry = () => {
 
 const styles = StyleSheet.create({
   box1: {
-    backgroundColor: "#77DD77",
     marginHorizontal: 10,
     borderRadius: 8,
     marginBottom: 10,
