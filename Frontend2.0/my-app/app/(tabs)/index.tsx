@@ -1,4 +1,4 @@
-import { get_actions, get_summary } from "../../models/llm_call";
+import { get_actions, get_summary, get_response } from "../../models/llm_call";
 import {
   Image,
   TextInput,
@@ -13,6 +13,10 @@ import { Text, View } from "../../components/Themed";
 import { FullWindowOverlay } from "react-native-screens";
 import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Tts from 'react-native-tts';
+import Spokestack from 'react-native-spokestack';
+import ChatBubble from 'react-native-chat-bubble';
+import * as Speech from 'expo-speech';
 
 import { Button } from "@rneui/themed";
 
@@ -23,11 +27,14 @@ export default function JournalScreen() {
   const [inputText, setInputText] = useState("");
   const [summCounter, setSummCounter] = useState(0);
   const [actions, setActions] = useState<string[]>([]);
+  const [sound, setSound] = useState<Audio.Sound | undefined>();
+  const [responseText, setResponseText] = useState("Content here should be easy to change");
 
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams();
   const { id = 0 } = params as { id?: number };
+  let audio_mode = "villager";
 
   const pics = [
     require("../../assets/images/dino0.png"),
@@ -35,6 +42,13 @@ export default function JournalScreen() {
     require("../../assets/images/dino2.png"),
     require("../../assets/images/dino3.png"),
   ];
+
+  const personalities = [
+    "kind but stern",
+    "kind and really silly",
+    "blut and serious, kinda mean",
+    "kind and goofy pirate talks only like a pirate"
+  ]
 
   const handleInputChange = (text: string) => {
     setInputText(text);
@@ -52,34 +66,73 @@ export default function JournalScreen() {
       Animated.parallel([
         Animated.sequence([
           Animated.timing(translateY, {
-            toValue: -12,
-            duration: 1000, // Adjust the duration as needed
+            toValue: -6,
+            duration: 500, // Adjust the duration as needed
             useNativeDriver: true,
           }),
           Animated.timing(translateY, {
             toValue: 0,
-            duration: 1000, // Adjust the duration as needed
+            duration: 500, // Adjust the duration as needed
             useNativeDriver: true,
           }),
         ]),
         Animated.sequence([
           Animated.timing(scale, {
             toValue: 1.1,
-            duration: 1000, // Adjust the duration as needed
+            duration: 500, // Adjust the duration as needed
             useNativeDriver: true,
           }),
           Animated.timing(scale, {
             toValue: 1,
-            duration: 1000, // Adjust the duration as needed
+            duration: 500, // Adjust the duration as needed
             useNativeDriver: true,
           }),
         ]),
       ])
     );
 
-    moveAnimation.start();
+    const isSpeaking = async () => {
+      const speaking = await Speech.isSpeakingAsync();
+      if (speaking) {
+        moveAnimation.stop();
+        Animated.parallel([
+          Animated.timing(translateY, {
+            toValue: -12,
+            duration: 250, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 1.2,
+            duration: 250, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        moveAnimation.start();
+        Animated.parallel([
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 500, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 1,
+            duration: 500, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    };
+
+    isSpeaking(); // Initial check
+
+    // Check every second if speech is still active
+    const interval = setInterval(() => {
+      isSpeaking();
+    }, 1000);
 
     return () => {
+      clearInterval(interval);
       moveAnimation.stop();
     };
   }, [translateY, scale]);
@@ -129,6 +182,18 @@ export default function JournalScreen() {
     }
   }
 
+  const playSound = async () => {
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require('../../assets/audio/animal_crossing.mp3')
+      );
+      setSound(sound);
+      await sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  };
+
   async function stopRecording() {
     try {
       if (recording && recordingStatus === "recording") {
@@ -137,6 +202,7 @@ export default function JournalScreen() {
         const recordingUri = recording.getURI();
         // Create a file name for the recording
         const fileName = `recording-${Date.now()}.wav`;
+
         if (recordingUri) {
           // Move the recording to the new directory with the new file name
           await FileSystem.makeDirectoryAsync(
@@ -210,6 +276,13 @@ export default function JournalScreen() {
 
       // Mood -> can be detected from the voice -> Output integer 1(sad) or 5 (happy) ->  If sad: "Would you like help" button
       // That would call help endpoint -> (could be little slide up window, something like that to highlight OR dino says it?)
+      const text2 = await get_response(inputText, personalities[id]);
+      setResponseText(text2)
+      if (audio_mode == "villager") {
+        await playSound();
+      } else if (audio_mode == "model") {
+        Speech.speak(text2)
+      }
     } else {
       await startRecording();
     }
@@ -225,7 +298,15 @@ export default function JournalScreen() {
     >
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Home Screeffqewfwefwefn</Text>
+          <ChatBubble
+          isOwnMessage={true}
+          bubbleColor='#ffffff'
+          tailColor='#ffffff'
+          withTail={true}
+          style = {{height:200, width:700, margin:5}}
+        >
+          <Text style = {{fontSize:18}}>{responseText}</Text>
+        </ChatBubble>
         </View>
 
         <View style={styles.imgContainer}>
@@ -279,7 +360,8 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 3,
     margin: 30,
-    // flexDirection: 'row',
+    backgroundColor: "rgba(52, 52, 52, 0)",
+    flexDirection: 'column-reverse',
     // justifyContent: 'flex-start',
   },
   imgContainer: {
