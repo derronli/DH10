@@ -110,7 +110,11 @@ async function full_pipeline(wav_path) {
 
     const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, extracted_text));
 
-    return summary;
+    const action = await handle_async_err(await query_llm(system_prompts.action_items, summary));
+
+    const response = await handle_async_err(await query_llm(system_prompts.dino_response, summary));
+
+    return [summary, action, response];
 }
 
 /// Testing functions ///
@@ -123,7 +127,10 @@ async function test_journal_entry() {
 
 async function test_full_pipeline() {
     const wavFilePath = "./models/testing_inputs/preamble.wav";
-    console.log(await full_pipeline(wavFilePath));
+    const [summary, action, response] = await full_pipeline(wavFilePath);
+    console.log('Summary:\n', summary);
+    console.log('Action:\n', action);
+    console.log('Response:\n', response);
 }
 
 /**
@@ -146,5 +153,5 @@ async function test_gpt_prompts(){
 
 /// Testing Area ///
 // test_journal_entry();
-// test_full_pipeline();
-test_gpt_prompts();
+ test_full_pipeline();
+//test_gpt_prompts();
