@@ -7,18 +7,21 @@ import { ListItem } from '@rneui/themed';
 
 import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import HelplineBlock from "../../components/HealthlineBlock"
 
 import MentalHealthInfo from "../../mental_health/health_resources";
 
 function MentalHealthAccordion(): any {
 
   const [expanded, setExpanded] = useState(false);
+  const [expanded2, setExpanded2] = useState(false);
 
-  return <ListItem.Accordion
+  return <View>
+    <ListItem.Accordion
   content={
     <>
       <ListItem.Content>
-        <ListItem.Title>List Accordion</ListItem.Title>
+        <ListItem.Title>Mental Health Resources</ListItem.Title>
       </ListItem.Content>
     </>
   }
@@ -27,21 +30,38 @@ function MentalHealthAccordion(): any {
     setExpanded(!expanded);
   }}
 >
-  <ListItem bottomDivider>
+  <ListItem>
     <ListItem.Content>
-      <ListItem.Title>Mental Health Resources</ListItem.Title>
-      <ListItem.Subtitle>{MentalHealthInfo.Helpline}</ListItem.Subtitle>
+      <View>
+        {MentalHealthInfo.Helpline.map(({ name, number, desc }, index) => (
+          <HelplineBlock key={index} name={name} number={number} desc={desc} />
+        ))}
+      </View>
     </ListItem.Content>
     <ListItem.Chevron />
   </ListItem>
-  <ListItem bottomDivider>
+</ListItem.Accordion>
+<ListItem.Accordion
+  content={
+    <>
+      <ListItem.Content>
+        <ListItem.Title>Mental Health Tips</ListItem.Title>
+      </ListItem.Content>
+    </>
+  }
+  isExpanded={expanded2}
+  onPress={() => {
+    setExpanded2(!expanded2);
+  }}
+>
+  <ListItem>
     <ListItem.Content>
-      <ListItem.Title>Mental Health Tips</ListItem.Title>
       <ListItem.Subtitle>{MentalHealthInfo.Tips}</ListItem.Subtitle>
     </ListItem.Content>
     <ListItem.Chevron />
   </ListItem>
 </ListItem.Accordion>
+</View>
 }
 
 export default function TabFiveScreen() {
@@ -66,8 +86,8 @@ export default function TabFiveScreen() {
           darkColor="rgba(255,255,255,0.1)"
         />
         <Image source={pics[id]} style={{ width: 100, height: 100 }} />
-        
       </View>
+      {MentalHealthAccordion()}
     </ScrollView>
   )
 }
