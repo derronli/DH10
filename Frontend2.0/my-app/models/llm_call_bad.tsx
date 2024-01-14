@@ -1,6 +1,7 @@
-const fs = require("fs");
+// const fs = require("fs");
+import * as FileSystem from 'expo-file-system';
 
-require('dotenv').config();
+// require('dotenv').config();
 
 const llm_model = "cf/mistral/mistral-7b-instruct-v0.1";
 const text_class_model = "cf/huggingface/distilbert-sst-2-int8";
@@ -12,7 +13,7 @@ const system_prompts = {
     dino_response: "You are a friendly assistant that replies to what you are told like a good friend"
 }
 
-function create_message_body(system_content, user_content) {
+function create_message_body(system_content: string, user_content: string) {
     return {
         messages: [
             {
@@ -28,12 +29,12 @@ function create_message_body(system_content, user_content) {
 }
 
 /// Functions for querying llms ///
-async function run_llm(model, input) {
+async function run_llm(model: string, input: any) {
     const response = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${process.env.ACCOUNT_ID}/ai/run/${model}`,
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.EXPO_PUBLIC_ACCOUNT_ID}/ai/run/${model}`,
         {
             headers: {
-                Authorization: `Bearer ${process.env.API_TOKEN}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_TOKEN}`,
                 'content-type': 'application/json',
             },
             method: "POST",
@@ -45,21 +46,23 @@ async function run_llm(model, input) {
     return result;
 }
 
-async function run_speech2text(model, wavFile) {
-    const blob = new Uint8Array(wavFile.buffer);
-    const input = {
-        audio: [...blob]
-    }
+async function run_speech2text(model: string, wavFile: string) {
+    // const blob = new Uint8Array(wavFile.buffer);
+    // const input = {
+    //     audio: [...blob]
+    // }
+    const input = wavFile;
+    console.log("Inside the function, this is the wav file:", input);
 
     const response = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${process.env.ACCOUNT_ID}/ai/run/${model}`,
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.EXPO_PUBLIC_ACCOUNT_ID}/ai/run/${model}`,
         {
             headers: {
-                Authorization: `Bearer ${process.env.API_TOKEN}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_TOKEN}`,
                 'content-type': 'application/json'
             },
             method: "POST",
-            body: JSON.stringify(input),
+            body: JSON.stringify(input), 
         }
     );
 
@@ -67,8 +70,8 @@ async function run_speech2text(model, wavFile) {
     return result;
 }
 
-async function wav_to_text(wav_path) {
-    const wav_file = fs.readFileSync(wav_path);
+async function wav_to_text(wav_file: string) {
+    // const wav_file = fs.readFileSync(audio);
     const converted_text = await run_speech2text(`@${speech_2_text_model}`, wav_file);
 
     // console.log(converted_text);
@@ -79,7 +82,7 @@ async function wav_to_text(wav_path) {
     return [undefined, converted_text.result.text];
 }
 
-async function llm_call_response(summary){
+async function llm_call_response(summary: any){
     if (!summary.success) {
         return [summary.errors, undefined];
     }
@@ -87,7 +90,7 @@ async function llm_call_response(summary){
     return [undefined, summary.result.response];
 }
 
-async function query_llm(system_prompt, user_speech) {
+async function query_llm(system_prompt: string, user_speech: string) {
     const message_body = create_message_body(system_prompt, user_speech);
     // console.log(message_body);
     const summary = await run_llm(`@${llm_model}`, message_body);
@@ -96,7 +99,7 @@ async function query_llm(system_prompt, user_speech) {
     return await llm_call_response(summary);
 }
 
-async function classify_text(text){
+async function classify_text(text: string){
     const classified_result = await run_llm(`@${text_class_model}`, { text: text});
 
     const results = classified_result.result;
@@ -113,7 +116,7 @@ async function classify_text(text){
     let dayEmotion = "";
     for (const key of dayRating.keys()){
         if (pos <= key){
-            dayEmotion = dayRating.get(key);
+            dayEmotion = dayRating.get(key) as string;
             break;
         }
     }
@@ -124,7 +127,7 @@ async function classify_text(text){
 }
 
 
-async function handle_async_err([err, res]) {
+async function handle_async_err([err, res]: any) {
     if (err) {
         return err;
     }
@@ -132,7 +135,13 @@ async function handle_async_err([err, res]) {
     return res;
 }
 
-async function full_pipeline(wav_path) {
+export async function pipeline_summary(wav_path: string) {
+    const extracted_text = await handle_async_err(await wav_to_text(wav_path));
+    console.log(extracted_text);
+    return await handle_async_err(await query_llm(system_prompts.journal_entry, extracted_text));
+}
+
+export async function full_pipeline(wav_path: any) {
     const extracted_text = await handle_async_err(await wav_to_text(wav_path));
 
     const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, extracted_text));
@@ -170,16 +179,16 @@ async function test_gpt_prompts(){
         "Today was filled with unexpected twists and turns. Started the day with a positive mindset, but a sudden change in plans threw me off. Despite the challenges, I embraced the spontaneity and found joy in the unpredictability. Work was a mix of setbacks and achievements – a project meeting went smoothly, but a technical glitch caused some delays. I didn't get around to finishing the research for a personal writing project, and that's disappointing. However, I'm choosing to view it as a chance to dive deeper tomorrow. In the evening, I took a spontaneous walk in the rain, letting go of the day's stressors. Today taught me the importance of flexibility and resilience, and I'm grateful for the opportunities to learn and grow."
     ]
 
-    for (prompt of prompts){
-        console.log(`Prompt:\n\t${prompt}`)
-        const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, prompt));
+    for (let curr_prompt of prompts){
+        console.log(`Prompt:\n\t${curr_prompt}`)
+        const summary = await handle_async_err(await query_llm(system_prompts.journal_entry, curr_prompt));
         console.log(`\nResponse:\n\t${summary}`)
         console.log("\n")
     }
 }
 
 async function test_classify_text(){
-    prompts = [
+    let prompts = [
         "I am very full",
         "I am neither happy nor sad",
         "I am very sad",
@@ -187,7 +196,7 @@ async function test_classify_text(){
         "I think I am about to get disowned but I am still happy"
     ]
 
-    for (prompt of prompts){
+    for (let prompt of prompts){
         console.log(`Prompt: ${prompt}`)
         const resp = await classify_text(prompt);
         console.log(`How was the day: ${resp}\n`)
