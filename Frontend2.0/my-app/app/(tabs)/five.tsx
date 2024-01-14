@@ -37,7 +37,7 @@ function MentalHealthAccordion(): any {
     <ListItem.Content>
       <View>
         {MentalHealthInfo.Helpline.map(({ name, number, desc }, index) => (
-          <HelplineBlock key={index} name={name} number={number} desc={desc} color={itemColours[index % itemColours.length]} />
+          <HelplineBlock key={index} name={name} number={number} desc={desc} colour={itemColours[index % itemColours.length]} />
         ))}
       </View>
     </ListItem.Content>
