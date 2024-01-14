@@ -1,42 +1,32 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image } from "react-native";
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+import EditScreenInfo from "../../components/EditScreenInfo";
+import { Text, View } from "../../components/Themed";
+
+import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
+
 export default function TabTwoScreen() {
-  const {
-    recording,
-    speaking,
-    transcribing,
-    transcript,
-    pauseRecording,
-    startRecording,
-    stopRecording,
-  } = useWhisper({
-    apiKey: process.env.EXPO_PUBLIC_OPENAI_API_TOKEN, // YOUR_OPEN_AI_TOKEN
-  })
+  const navigation = useNavigation();
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const { id = 0, other } = params as { id?: number; other?: any };
+
+  const pics = [
+    require("../../assets/images/dino0.png"),
+    require("../../assets/images/dino1.png"),
+    require("../../assets/images/dino2.png"),
+  ];
 
   return (
-    <View>
-      <Text>Recording: {recording}</Text>
-      <Text>Speaking: {speaking}</Text>
-      <Text>Transcribing: {transcribing}</Text>
-      <Text>Transcribed Text: {transcript.text}</Text>
-      <TouchableOpacity onPress={() => {startRecording(); console.log('qwef')}}>
-        <View style={styles.button}>
-          <Text>Start</Text>
-          
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => pauseRecording()}>
-        <View style={styles.button}>
-          <Text>Pause</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => stopRecording()}>
-        <View style={styles.button}>
-          <Text>Stop</Text>
-        </View>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <Text style={styles.title}>Tab Three</Text>
+      <View
+        style={styles.separator}
+        lightColor="#eee"
+        darkColor="rgba(255,255,255,0.1)"
+      />
+      <Image source={pics[id]} style={{ width: 100, height: 100 }} />
+      <EditScreenInfo path="app/(tabs)/three.tsx" />
     </View>
   )
 }
@@ -44,17 +34,17 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
   button: {
     backgroundColor: 'blue',
