@@ -22,7 +22,7 @@ export default function TabTwoScreen() {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: "white" }}>
       <Button onPress={handleAddJournalEntry} title="Add" />
       <View style={{ flexDirection: "row" }}>
         {/* This is the left column */}
