@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const llm_model = "cf/mistral/mistral-7b-instruct-v0.1";
 const text_class_model = "cf/huggingface/distilbert-sst-2-int8";
 
@@ -28,10 +26,10 @@ function create_message_body(system_content, user_content) {
 /// Functions for querying llms ///
 async function run_llm(model, input) {
     const response = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${process.env.ACCOUNT_ID}/ai/run/${model}`,
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.EXPO_PUBLIC_ACCOUNT_ID}/ai/run/${model}`,
         {
             headers: {
-                Authorization: `Bearer ${process.env.API_TOKEN}`,
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_TOKEN}`,
                 //'content-type': 'application/json',
             },
             method: "POST",
