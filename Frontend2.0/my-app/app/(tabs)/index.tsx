@@ -166,7 +166,6 @@ export default function JournalScreen() {
   const image = require("../../assets/images/beach.jpg");
 
   return (
-    // <View style={styles.backgroundContainer}>
       <ImageBackground source={image} resizeMode="cover" style={styles.background}>
         <View style={styles.container}>
           <View style={styles.textContainer}>
@@ -225,7 +224,6 @@ export default function JournalScreen() {
             titleStyle={{ fontSize: 18 }}
           />
         </View>
-      </View>
     </ImageBackground>
     // </View>
   );
