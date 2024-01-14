@@ -12,6 +12,12 @@ export default function JournalScreen() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingStatus, setRecordingStatus] = useState('idle');
   const [audioPermission, setAudioPermission] = useState<boolean | null>(null);
+  const [inputText, setInputText] = useState('');
+
+  const handleInputChange = (text: string) => {
+    setInputText(text);
+    console.log(text);
+  };
 
   useEffect(() => {
 
@@ -78,9 +84,9 @@ export default function JournalScreen() {
         }
 
         // This is for simply playing the sound back
-        const playbackObject = new Audio.Sound();
-        await playbackObject.loadAsync({ uri: FileSystem.documentDirectory + 'recordings/' + `${fileName}` });
-        await playbackObject.playAsync();
+        // const playbackObject = new Audio.Sound();
+        // await playbackObject.loadAsync({ uri: FileSystem.documentDirectory + 'recordings/' + `${fileName}` });
+        // await playbackObject.playAsync();
 
         // resert our states to record again
         setRecording(null);
@@ -117,6 +123,14 @@ export default function JournalScreen() {
               source={require('../../assets/images/dino.png')} // Replace with the path to your dino image
               style={styles.dino_image}
             />
+          </View>
+
+          <View style={{backgroundColor: 'rgba(52, 52, 52, 0)'}}>
+            <TextInput 
+              style={styles.textHide}
+              onChangeText={handleInputChange}
+              value={inputText}
+            ></TextInput>
           </View>
 
           <View style={styles.button}>
@@ -189,5 +203,10 @@ const styles = StyleSheet.create({
     marginBottom:75, 
     backgroundColor: "red", 
     borderRadius: 30,
+  },
+  textHide: {
+    height: 40,
+    color: 'rgba(52, 52, 52, 0)',
+    backgroundColor: 'rgba(52, 52, 52, 0)'
   }
 });
