@@ -3,15 +3,12 @@ import { StyleSheet } from "react-native";
 
 import { Text, View } from "./Themed";
 
-const JournalEntry = ({ colour }) => {
+const JournalEntry = ({ colour, journalBody }) => {
   return (
     <View style={[styles.box1, { backgroundColor: colour }]}>
       <View style={styles.textbox}>
         <Text style={styles.heading}>Bad Day</Text>
-        <Text style={styles.note}>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-          laudantium ipsum ab possimus esse maxime atque,
-        </Text>
+        <Text style={styles.note}>{journalBody}</Text>
         <Text style={{ textAlign: "right", color: "black" }}>Jan 13, 2024</Text>
       </View>
     </View>

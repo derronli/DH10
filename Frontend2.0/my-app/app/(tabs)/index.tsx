@@ -12,6 +12,7 @@ import * as FileSystem from "expo-file-system";
 import { Text, View } from "../../components/Themed";
 import { FullWindowOverlay } from "react-native-screens";
 import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Button } from "@rneui/themed";
 
@@ -20,6 +21,7 @@ export default function JournalScreen() {
   const [recordingStatus, setRecordingStatus] = useState("idle");
   const [audioPermission, setAudioPermission] = useState<boolean | null>(null);
   const [inputText, setInputText] = useState("");
+  const [summCounter, setSummCounter] = useState(0);
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -41,6 +43,8 @@ export default function JournalScreen() {
   const scale = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    clearAll();
+
     // Move the image up and down in a loop
     const moveAnimation = Animated.loop(
       Animated.parallel([
@@ -157,12 +161,36 @@ export default function JournalScreen() {
     }
   }
 
+  const clearAll = async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch (e) {
+      // clear error
+    }
+
+    console.log("Done.");
+  };
+  const storeData = async (value: string) => {
+    try {
+      await AsyncStorage.setItem(`summaryNote${summCounter}`, value);
+      let index = summCounter + 1;
+      setSummCounter(index);
+      console.log("/this is summ counter");
+      console.log(summCounter);
+    } catch (e) {
+      // saving error
+    }
+  };
+
   async function handleRecordButtonPress() {
     if (recording) {
       const audioUri = await stopRecording();
       console.log("Saved audio file to", audioUri);
       const text = await get_summary(inputText);
+      // NEW EDITS ===================
       console.log(text);
+      storeData(text);
+      setInputText("");
     } else {
       await startRecording();
     }
