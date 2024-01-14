@@ -1,5 +1,10 @@
+// Used for when running outside of the app since it conflicts with expo
+// const fs = require("fs");
+// require('dotenv').config();
+
 const llm_model = "cf/mistral/mistral-7b-instruct-v0.1";
 const text_class_model = "cf/huggingface/distilbert-sst-2-int8";
+const speech_2_text_model = "cf/openai/whisper";
 
 const system_prompts = (personality = 'friendly') => {
     const prefix = `You are my ${personality} friend that `;
@@ -28,6 +33,44 @@ function create_message_body(system_content, user_content) {
             },
         ],
     };
+}
+
+/**
+ * Uses a given wave file and speech to text model and returns the words spoken in the file.
+ */
+async function run_speech2text(model, wavFile) {
+    const blob = new Uint8Array(wavFile.buffer);
+    const input = {
+        audio: [...blob]
+    }
+    const response = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.EXPO_PUBLIC_ACCOUNT_ID}/ai/run/${model}`,
+        {
+            headers: {
+                Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_TOKEN}`,
+                'content-type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify(input), 
+        }
+    );
+
+    const result = await response.json();
+    return result;
+}
+
+/**
+ * Reads in a path of a .wav file and returns the text using a speech-to-text model
+ */
+async function wav_to_text(wav_file) {
+    const wav_file = fs.readFileSync(audio);
+    const converted_text = await run_speech2text(`@${speech_2_text_model}`, wav_file);
+
+    if (!converted_text.success) {
+        return [converted_text.errors, undefined];
+    }
+
+    return [undefined, converted_text.result.text];
 }
 
 /// Functions for querying llms ///
