@@ -30,6 +30,7 @@ export default function JournalScreen() {
     require("../../assets/images/dino0.png"),
     require("../../assets/images/dino1.png"),
     require("../../assets/images/dino2.png"),
+    require("../../assets/images/dino3.png"),
   ];
 
   const handleInputChange = (text: string) => {
