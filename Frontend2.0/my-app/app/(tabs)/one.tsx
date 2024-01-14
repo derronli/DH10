@@ -44,6 +44,12 @@ export default function TabTwoScreen() {
             style={styles.dinoimg}
           />
         </View>
+        <View style={styles.page} key="4">
+          <Image
+            source={require("../../assets/images/yellowdinotreasure.png")}
+            style={styles.dinoimg}
+          />
+        </View>
       </PagerView>
 
       <ScrollView style={{ margin: 20 }}>
