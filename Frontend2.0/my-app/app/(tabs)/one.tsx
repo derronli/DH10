@@ -1,12 +1,31 @@
-import { StyleSheet, ScrollView, View, Text, Image } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  Image,
+  Button,
+} from "react-native";
 import PagerView from "react-native-pager-view";
+import React, { useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import { Link } from "expo-router";
 
 import EditScreenInfo from "../../components/EditScreenInfo";
 
 export default function TabTwoScreen() {
+  const [index, setIndex] = useState(0);
+  const handlePageChange = (newIndex: number) => {
+    setIndex(newIndex);
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <PagerView style={styles.viewPager} initialPage={0}>
+      <PagerView
+        style={styles.viewPager}
+        initialPage={index}
+        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
+      >
         <View style={styles.page} key="1">
           <Image
             source={require("../../assets/images/bluedino.png")}
@@ -31,6 +50,15 @@ export default function TabTwoScreen() {
         <Text style={{ fontWeight: "bold", fontSize: 20, marginBottom: 10 }}>
           Choose Your Buddy
         </Text>
+        <Link
+          href={{
+            pathname: "/two",
+            // /* 1. Navigate to the details route with query params */
+            params: { id: index, other: "blah" },
+          }}
+        >
+          Go to Details
+        </Link>
       </ScrollView>
     </View>
 
