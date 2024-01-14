@@ -9,7 +9,7 @@ const JournalEntry = ({ colour, journalBody, title }) => {
       <View style={styles.textbox}>
         <Text style={styles.heading}>{`Entry #${title + 1}`}</Text>
         <Text style={styles.note}>{journalBody}</Text>
-        <Text style={{ textAlign: "right", color: "black" }}>Jan 13, 2024</Text>
+        <Text style={{ textAlign: "right", color: "black" }}>Jan 14, 2024</Text>
       </View>
     </View>
   );
