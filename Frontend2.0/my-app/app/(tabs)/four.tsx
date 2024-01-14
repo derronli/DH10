@@ -1,70 +1,76 @@
-import { StyleSheet, Pressable } from 'react-native';
-import React, { useState } from 'react';
-import { Card } from '@rneui/themed';
+import { ScrollView, StyleSheet } from "react-native";
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View, } from '../../components/Themed';
+import JournalEntry from "../../components/JournalEntry";
+import { Text, View } from "../../components/Themed";
+import { Button } from "react-native";
+import { useState } from "react";
 
-const PressableCard = () => {
+export default function TabTwoScreen() {
+  // ****** Will hold the title and text of each journal entry -> so they can be mapped + passed as props to the JournalEntry component
+  const [journals, setJournals] = useState<number[]>([]);
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  // will rotate between all of them
+  const noteColours = ["#61a8ff", "#f07069", "#81e3b7", "#FAC898"];
 
-  const handlePress = () => {
-    console.log('Card Pressed!');
-    setIsExpanded(!isExpanded);
+  // ***** Inputs: Title + Text of journal entry (will likely be called externally)
+  const handleAddJournalEntry = () => {
+    // The list will just be some values for now -> later on will need to change
+    // Adding the value 0 to the array
+
+    setJournals((journals) => [...journals, 0]);
+    console.log(journals);
   };
 
   return (
-    <Pressable onPress={handlePress}>
-        <Card>
-            <Card.Title style={styles.title}>Journey Entry</Card.Title>
-            <Card.Divider />
-                {isExpanded ? (
-              <View>
-                <Text>
-                  Expanded Content
-                  A lot more stuff
-                  qofijwef
-                </Text>
-                {/* Add additional content for expanded state */}
-              </View>
-            ) : (
-              <View>
-                <Text>Collapsed Content</Text>
-                {/* Add additional content for collapsed state */}
-              </View>
-            )}
-          </Card>
-      </Pressable>
-  );
-};
+    <ScrollView style={{ backgroundColor: "white" }}>
+      <Button onPress={handleAddJournalEntry} title="Add" />
+      <View
+        style={{
+          backgroundColor: "#D3D3D3",
+          marginHorizontal: 12,
+          padding: 5,
+          borderRadius: 12,
+          marginVertical: 8,
+        }}
+      >
+        <Text style={{ marginHorizontal: 10, marginVertical: 2 }}>
+          Search your notes...
+        </Text>
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        {/* This is the left column */}
+        <View style={styles.boxContainer}>
+          {/* Only rendering even index journal entries */}
+          {journals.map((journal, index) =>
+            index % 2 === 0 ? (
+              <JournalEntry
+                key={index}
+                colour={noteColours[index % noteColours.length]}
+              />
+            ) : null
+          )}
+        </View>
 
-export default function TabOneScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home Screen</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-
-      <PressableCard></PressableCard>
-      
-    </View>
+        {/* This is the right column */}
+        <View style={styles.boxContainer}>
+          {journals.map((journal, index) =>
+            index % 2 === 1 ? (
+              <JournalEntry
+                key={index}
+                colour={noteColours[index % noteColours.length]}
+              />
+            ) : null
+          )}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  boxContainer: {
+    backgroundColor: "white",
+    flexDirection: "column",
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
 });
