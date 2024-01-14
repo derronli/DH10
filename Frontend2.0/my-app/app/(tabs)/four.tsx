@@ -56,6 +56,7 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
   boxContainer: {
+    backgroundColor: "white",
     flexDirection: "column",
     flex: 1,
   },
