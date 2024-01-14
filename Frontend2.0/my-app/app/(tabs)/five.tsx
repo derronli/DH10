@@ -13,6 +13,9 @@ import MentalHealthInfo from "../../mental_health/health_resources";
 
 function MentalHealthAccordion(): any {
 
+  // will rotate between all of them
+  const itemColours = ["#ffeead", "#96ceb4", "#ffcc5c", "#83f6bf"];
+
   const [expanded, setExpanded] = useState(false);
   const [expanded2, setExpanded2] = useState(false);
 
@@ -34,7 +37,7 @@ function MentalHealthAccordion(): any {
     <ListItem.Content>
       <View>
         {MentalHealthInfo.Helpline.map(({ name, number, desc }, index) => (
-          <HelplineBlock key={index} name={name} number={number} desc={desc} />
+          <HelplineBlock key={index} name={name} number={number} desc={desc} color={itemColours[index % itemColours.length]} />
         ))}
       </View>
     </ListItem.Content>
