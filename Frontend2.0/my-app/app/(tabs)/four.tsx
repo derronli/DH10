@@ -52,7 +52,7 @@ export default function TabTwoScreen() {
         style={{ marginLeft: 10 }}
       ></FontAwesome.Button>
       <Button
-        onPress={() => handleAddJournalEntry("asdasdasdasd")}
+        onPress={() => handleAddJournalEntry("This is a test entry")}
         title="Add"
       />
       <View
@@ -76,6 +76,7 @@ export default function TabTwoScreen() {
             index % 2 === 0 ? (
               <JournalEntry
                 key={index}
+                title={index}
                 journalBody={journal}
                 colour={noteColours[index % noteColours.length]}
               />
@@ -89,6 +90,7 @@ export default function TabTwoScreen() {
             index % 2 === 1 ? (
               <JournalEntry
                 key={index}
+                title={index}
                 journalBody={journal}
                 colour={noteColours[index % noteColours.length]}
               />
