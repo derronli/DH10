@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 import JournalEntry from "../../components/JournalEntry";
 import { Text, View } from "../../components/Themed";
@@ -9,6 +9,7 @@ export default function TabTwoScreen() {
   // ****** Will hold the title and text of each journal entry -> so they can be mapped + passed as props to the JournalEntry component
   const [journals, setJournals] = useState<number[]>([]);
 
+  // will rotate between all of them
   const noteColours = ["#77DD77", "#FF6961", "#AEC6CF", "#FAC898"];
 
   // ***** Inputs: Title + Text of journal entry (will likely be called externally)
@@ -21,7 +22,7 @@ export default function TabTwoScreen() {
   };
 
   return (
-    <View>
+    <ScrollView>
       <Button onPress={handleAddJournalEntry} title="Add" />
       <View style={{ flexDirection: "row" }}>
         {/* This is the left column */}
@@ -49,7 +50,7 @@ export default function TabTwoScreen() {
           )}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
