@@ -24,6 +24,19 @@ export default function TabTwoScreen() {
   return (
     <ScrollView style={{ backgroundColor: "white" }}>
       <Button onPress={handleAddJournalEntry} title="Add" />
+      <View
+        style={{
+          backgroundColor: "#D3D3D3",
+          marginHorizontal: 12,
+          padding: 5,
+          borderRadius: 12,
+          marginVertical: 8,
+        }}
+      >
+        <Text style={{ marginHorizontal: 10, marginVertical: 2 }}>
+          Search your notes...
+        </Text>
+      </View>
       <View style={{ flexDirection: "row" }}>
         {/* This is the left column */}
         <View style={styles.boxContainer}>
