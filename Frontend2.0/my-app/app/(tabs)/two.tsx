@@ -5,8 +5,6 @@ import { Image, Button, TouchableOpacity } from "react-native";
 import ActionableItem from "../../components/ActionableItem";
 import { useState } from "react";
 
-import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
-
 // THIS IS ACTIONABLES SCREEN =========================================================================
 export default function TabTwoScreen() {
   const [actionItems, setActionItems] = useState<string[]>([
@@ -15,11 +13,6 @@ export default function TabTwoScreen() {
     "Eat food",
     "Do Homework :(",
   ]);
-
-  const navigation = useNavigation();
-  const router = useRouter();
-  const params = useLocalSearchParams();
-  const { id = 42, other } = params;
 
   const handleBtnPress = (txt) => {
     let cp = [...actionItems];
@@ -33,13 +26,12 @@ export default function TabTwoScreen() {
   return (
     <ScrollView style={{ backgroundColor: "white" }}>
       <View style={styles.section1}>
-        <Text>{id}</Text>
         <Text style={styles.greeting}>Hey! How are you feeling today?</Text>
       </View>
       <View
         style={[
           styles.section1,
-          { alignItems: "flex-end", height: 150, justifyContent: "center" },
+          { alignItems: "flex-end", height: 110, justifyContent: "center" },
         ]}
       >
         <Image
@@ -61,16 +53,17 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   section1: {
     backgroundColor: "gray",
-    height: 75,
+    height: 120,
     padding: 20,
   },
   section2: {
     backgroundColor: "white",
   },
   greeting: {
-    fontSize: 20,
+    fontSize: 30,
     color: "black",
-    maxWidth: 200,
+    fontWeight: "600",
+    maxWidth: 300,
   },
   img: {
     width: 100,

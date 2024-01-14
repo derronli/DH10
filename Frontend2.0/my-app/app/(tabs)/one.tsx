@@ -52,12 +52,19 @@ export default function TabTwoScreen() {
         </Text>
         <Link
           href={{
-            pathname: "/two",
+            pathname: "/five",
             // /* 1. Navigate to the details route with query params */
             params: { id: index, other: "blah" },
           }}
+          style={{
+            padding: 10,
+            backgroundColor: "#FF6961",
+            borderRadius: 4,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
         >
-          Go to Details
+          Apply
         </Link>
       </ScrollView>
     </View>
