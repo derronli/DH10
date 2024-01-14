@@ -10,7 +10,7 @@ export default function TabTwoScreen() {
   const [journals, setJournals] = useState<number[]>([]);
 
   // will rotate between all of them
-  const noteColours = ["#77DD77", "#FF6961", "#AEC6CF", "#FAC898"];
+  const noteColours = ["#61a8ff", "#f07069", "#81e3b7", "#FAC898"];
 
   // ***** Inputs: Title + Text of journal entry (will likely be called externally)
   const handleAddJournalEntry = () => {

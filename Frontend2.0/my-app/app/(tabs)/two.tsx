@@ -1,9 +1,10 @@
 import { ScrollView, StyleSheet } from "react-native";
 
-import { Text, View } from "../../components/Themed";
-import { Image, Button, TouchableOpacity } from "react-native";
+import { Text } from "../../components/Themed";
+import { Image, Button, TouchableOpacity, View } from "react-native";
 import ActionableItem from "../../components/ActionableItem";
 import { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 // THIS IS ACTIONABLES SCREEN =========================================================================
 export default function TabTwoScreen() {
@@ -25,21 +26,27 @@ export default function TabTwoScreen() {
 
   return (
     <ScrollView style={{ backgroundColor: "white" }}>
-      <View style={styles.section1}>
-        <Text style={styles.greeting}>Hey! How are you feeling today?</Text>
-      </View>
-      <View
-        style={[
-          styles.section1,
-          { alignItems: "flex-end", height: 110, justifyContent: "center" },
-        ]}
-      >
-        <Image
-          style={styles.img}
-          source={{
-            uri: "https://cdn-icons-png.flaticon.com/512/5458/5458378.png ",
-          }}
+      <View style={{}}>
+        <LinearGradient
+          colors={["#f0bebb", "transparent"]}
+          style={styles.background}
         />
+        <View style={styles.section1}>
+          <Text style={styles.greeting}>Hey! How are you feeling today?</Text>
+        </View>
+        <View
+          style={[
+            styles.section1,
+            { alignItems: "flex-end", height: 110, justifyContent: "center" },
+          ]}
+        >
+          <Image
+            style={styles.img}
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/5458/5458378.png ",
+            }}
+          />
+        </View>
       </View>
       <View style={styles.section2}>
         {actionItems.map((txt, index) => (
@@ -51,8 +58,14 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
+  background: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 300,
+  },
   section1: {
-    backgroundColor: "gray",
     height: 120,
     padding: 20,
   },
