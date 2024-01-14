@@ -41,7 +41,7 @@ export default function JournalScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { id = 0 } = params as { id?: number };
-  let audio_mode = "villager";
+  let audio_mode = "model";
 
   const pics = [
     require("../../assets/images/dino0.png"),
@@ -67,79 +67,38 @@ export default function JournalScreen() {
 
   useEffect(() => {
     clearAll();
-
     // Move the image up and down in a loop
     const moveAnimation = Animated.loop(
       Animated.parallel([
         Animated.sequence([
           Animated.timing(translateY, {
-            toValue: -6,
-            duration: 500, // Adjust the duration as needed
+            toValue: -12,
+            duration: 1000, // Adjust the duration as needed
             useNativeDriver: true,
           }),
           Animated.timing(translateY, {
             toValue: 0,
-            duration: 500, // Adjust the duration as needed
+            duration: 1000, // Adjust the duration as needed
             useNativeDriver: true,
           }),
         ]),
         Animated.sequence([
           Animated.timing(scale, {
             toValue: 1.1,
-            duration: 500, // Adjust the duration as needed
+            duration: 1000, // Adjust the duration as needed
             useNativeDriver: true,
           }),
           Animated.timing(scale, {
             toValue: 1,
-            duration: 500, // Adjust the duration as needed
+            duration: 1000, // Adjust the duration as needed
             useNativeDriver: true,
           }),
         ]),
       ])
     );
-
-    const isSpeaking = async () => {
-      const speaking = await Speech.isSpeakingAsync();
-      if (speaking) {
-        moveAnimation.stop();
-        Animated.parallel([
-          Animated.timing(translateY, {
-            toValue: -12,
-            duration: 250, // Adjust the duration as needed
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1.2,
-            duration: 250, // Adjust the duration as needed
-            useNativeDriver: true,
-          }),
-        ]).start();
-      } else {
-        moveAnimation.start();
-        Animated.parallel([
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: 500, // Adjust the duration as needed
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 500, // Adjust the duration as needed
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }
-    };
-
-    isSpeaking(); // Initial check
-
-    // Check every second if speech is still active
-    const interval = setInterval(() => {
-      isSpeaking();
-    }, 1000);
+    moveAnimation.start();
 
     return () => {
-      clearInterval(interval);
       moveAnimation.stop();
     };
   }, [translateY, scale]);
@@ -273,6 +232,15 @@ export default function JournalScreen() {
     if (recording) {
       const audioUri = await stopRecording();
       console.log("Saved audio file to", audioUri);
+      // voice over
+      const text2 = await get_response(inputText, personalities[id]);
+      setResponseText(text2);
+      if (audio_mode == "villager") {
+        await playSound();
+      } else if (audio_mode == "model") {
+        Speech.speak(text2);
+      }
+
       const text = await get_summary(inputText);
       // NEW EDITS ===================
       console.log(text);
@@ -293,13 +261,6 @@ export default function JournalScreen() {
       if (mood == 1) {
         // navigate to modal
         navigateToModal();
-      }
-      const text2 = await get_response(inputText, personalities[id]);
-      setResponseText(text2);
-      if (audio_mode == "villager") {
-        await playSound();
-      } else if (audio_mode == "model") {
-        Speech.speak(text2);
       }
     } else {
       await startRecording();
