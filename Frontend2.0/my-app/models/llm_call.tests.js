@@ -1,5 +1,7 @@
 import { get_summary, get_actions, get_response, get_help, get_mood } from './llm_call';
 
+require('dotenv').config();
+
 // Testing summarization with a small piece of text.
 async function test_journal_entry() {
   const journal_speech =
