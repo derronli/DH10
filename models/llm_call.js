@@ -96,6 +96,33 @@ async function query_llm(system_prompt, user_speech) {
     return await llm_call_response(summary);
 }
 
+async function classify_text(text){
+    const classified_result = await run_llm(`@${text_class_model}`, { text: text});
+
+    const results = classified_result.result;
+    const pos = (results[0].label == 'POSITIVE') ? results[0].score : results[1].score;
+
+    const dayRating = new Map([
+        [0.3, "Bad..."],
+        [0.5, "So-so."],
+        [0.7, "Good."],
+        [0.85, "Great!"],
+        [1.0, "Excellent!"]
+      ]);
+
+    let dayEmotion = "";
+    for (const key of dayRating.keys()){
+        if (pos <= key){
+            dayEmotion = dayRating.get(key);
+            break;
+        }
+    }
+    
+    // console.log(`Positive score: ${pos}`)
+    // console.log(`How was the day: ${dayEmotion}`);
+    return dayEmotion;
+}
+
 
 async function handle_async_err([err, res]) {
     if (err) {
@@ -151,7 +178,24 @@ async function test_gpt_prompts(){
     }
 }
 
+async function test_classify_text(){
+    prompts = [
+        "I am very full",
+        "I am neither happy nor sad",
+        "I am very sad",
+        "I am slightly sad but had a good day!",
+        "I think I am about to get disowned but I am still happy"
+    ]
+
+    for (prompt of prompts){
+        console.log(`Prompt: ${prompt}`)
+        const resp = await classify_text(prompt);
+        console.log(`How was the day: ${resp}\n`)
+    }
+}
+
 /// Testing Area ///
 // test_journal_entry();
- test_full_pipeline();
-//test_gpt_prompts();
+// test_full_pipeline();
+// test_gpt_prompts();
+// test_classify_text();
