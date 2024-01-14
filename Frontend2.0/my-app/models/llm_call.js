@@ -9,7 +9,7 @@ const system_prompts = (personality = 'friendly') => {
         action_items:
             prefix + `helps me come up with things I need to do. Based on what I tell you about my day, please give me bullet point suggestions on what I should do tomorrow`,
         dino_response:
-            prefix + `replies to what you are told like a good friend`,
+            prefix + `replies to what you are told like a good friend in two sentences`,
         stress_help:
             prefix + `helps me cope with my stress described by what I gave you`,
     }
