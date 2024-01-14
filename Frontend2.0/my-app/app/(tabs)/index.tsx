@@ -1,9 +1,10 @@
-import { Image, TextInput, StyleSheet, ImageBackground } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { Image, TextInput, StyleSheet, ImageBackground, Animated } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import { Text, View } from '../../components/Themed';
 import { FullWindowOverlay } from 'react-native-screens';
+import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 
 import {Button} from '@rneui/themed';
 
@@ -14,10 +15,62 @@ export default function JournalScreen() {
   const [audioPermission, setAudioPermission] = useState<boolean | null>(null);
   const [inputText, setInputText] = useState('');
 
+  const navigation = useNavigation();
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const { id = 0} = params as { id?: number};
+
+  const pics = [
+    require("../../assets/images/dino0.png"),
+    require("../../assets/images/dino1.png"),
+    require("../../assets/images/dino2.png"),
+  ];
+
   const handleInputChange = (text: string) => {
     setInputText(text);
     console.log(text);
   };
+
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Move the image up and down in a loop
+    const moveAnimation = Animated.loop(
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(translateY, {
+            toValue: -12,
+            duration: 1000, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 1000, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.sequence([
+          Animated.timing(scale, {
+            toValue: 1.1,
+            duration: 1000, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 1,
+            duration: 1000, // Adjust the duration as needed
+            useNativeDriver: true,
+          }),
+        ]),
+      ])
+    );
+
+    moveAnimation.start();
+
+    return () => {
+      moveAnimation.stop();
+    };
+  }, [translateY, scale]);
 
   useEffect(() => {
 
@@ -119,9 +172,9 @@ export default function JournalScreen() {
 
           <View style={styles.imgContainer}>
             {/* Dino Image at the Bottom Left */}
-            <Image
-              source={require('../../assets/images/dino.png')} // Replace with the path to your dino image
-              style={styles.dino_image}
+            <Animated.Image
+              source={pics[id]} // Replace with your image path
+              style={[styles.dino_image, { transform: [{ translateY }, { scale }] }]}
             />
           </View>
 
