@@ -17,32 +17,6 @@ export default function TabTwoScreen() {
     require("../../assets/images/dino2.png"),
   ];
 
-  // const getImageSource = (number: number) => {
-  //   switch (number) {
-  //     case 0:
-  //       return (
-  //         <Image
-  //           source={require("../../assets/images/dino0.png")}
-  //           style={{ width: 100, height: 100 }}
-  //         />
-  //       );
-  //     case 1:
-  //       return (
-  //         <Image
-  //           source={require("../../assets/images/dino1.png")}
-  //           style={{ width: 100, height: 100 }}
-  //         />
-  //       );
-  //     case 2:
-  //       return (
-  //         <Image
-  //           source={require("../../assets/images/dino2.png")}
-  //           style={{ width: 100, height: 100 }}
-  //         />
-  //       );
-  //   }
-  // };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab Three</Text>
