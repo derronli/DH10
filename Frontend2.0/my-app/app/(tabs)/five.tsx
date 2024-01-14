@@ -28,7 +28,7 @@ export default function TabTwoScreen() {
       <Image source={pics[id]} style={{ width: 100, height: 100 }} />
       <EditScreenInfo path="app/(tabs)/three.tsx" />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -45,5 +45,11 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
+  },
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
+    margin: 5,
+    borderRadius: 5,
   },
 });

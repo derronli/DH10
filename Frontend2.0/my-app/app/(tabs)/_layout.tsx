@@ -1,6 +1,7 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable, useColorScheme } from "react-native";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Link, Tabs } from 'expo-router';
+import { Pressable, useColorScheme } from 'react-native';
+import { View } from 'react-native';
 
 import Colors from "../../constants/Colors";
 
@@ -12,6 +13,25 @@ function TabBarIcon(props: {
   color: string;
 }) {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function TabBarIconMain(props: {
+  name: React.ComponentProps<typeof FontAwesome>['name'];
+  color: string;
+}) {
+  return (
+    <View style={{
+      width: 55,  // Adjust the width and height to set the size of the circle
+      height: 65,
+      borderRadius: 30,  // Half of the width/height to make it a circle
+      backgroundColor: '#fc3232',  // Set the background color of the circle
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 40
+    }}>
+      <FontAwesome size={45} style={{ marginBottom: 5 }} {...props} />
+    </View>
+  );
 }
 
 export default function TabLayout() {
@@ -41,8 +61,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          title: 'Journal',
+          tabBarIcon: ({ color, size }) => <TabBarIconMain name="home" color={color} />,
+          tabBarLabelStyle: { fontSize: 18 },
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -62,7 +83,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="four"
         options={{
-          title: "Journals",
+          title: 'History',
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
         }}
       />
