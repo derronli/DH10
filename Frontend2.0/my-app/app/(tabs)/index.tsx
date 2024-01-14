@@ -1,4 +1,9 @@
-import { get_actions, get_summary, get_response } from "../../models/llm_call";
+import {
+  get_actions,
+  get_summary,
+  get_response,
+  get_mood,
+} from "../../models/llm_call";
 import {
   Image,
   TextInput,
@@ -13,10 +18,10 @@ import { Text, View } from "../../components/Themed";
 import { FullWindowOverlay } from "react-native-screens";
 import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Tts from 'react-native-tts';
-import Spokestack from 'react-native-spokestack';
-import ChatBubble from 'react-native-chat-bubble';
-import * as Speech from 'expo-speech';
+import Tts from "react-native-tts";
+import Spokestack from "react-native-spokestack";
+import ChatBubble from "react-native-chat-bubble";
+import * as Speech from "expo-speech";
 
 import { Button } from "@rneui/themed";
 
@@ -28,7 +33,9 @@ export default function JournalScreen() {
   const [summCounter, setSummCounter] = useState(0);
   const [actions, setActions] = useState<string[]>([]);
   const [sound, setSound] = useState<Audio.Sound | undefined>();
-  const [responseText, setResponseText] = useState("Content here should be easy to change");
+  const [responseText, setResponseText] = useState(
+    "Click 'Not Recording' to begin your audio journal!"
+  );
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -47,8 +54,8 @@ export default function JournalScreen() {
     "kind but stern",
     "kind and really silly",
     "blut and serious, kinda mean",
-    "kind and goofy pirate talks only like a pirate"
-  ]
+    "kind and goofy pirate talks only like a pirate",
+  ];
 
   const handleInputChange = (text: string) => {
     setInputText(text);
@@ -185,12 +192,12 @@ export default function JournalScreen() {
   const playSound = async () => {
     try {
       const { sound } = await Audio.Sound.createAsync(
-        require('../../assets/audio/animal_crossing.mp3')
+        require("../../assets/audio/animal_crossing.mp3")
       );
       setSound(sound);
       await sound.playAsync();
     } catch (error) {
-      console.error('Error playing sound:', error);
+      console.error("Error playing sound:", error);
     }
   };
 
@@ -258,6 +265,10 @@ export default function JournalScreen() {
     }
   };
 
+  const navigateToModal = () => {
+    navigation.navigate("modal");
+  };
+
   async function handleRecordButtonPress() {
     if (recording) {
       const audioUri = await stopRecording();
@@ -276,12 +287,19 @@ export default function JournalScreen() {
 
       // Mood -> can be detected from the voice -> Output integer 1(sad) or 5 (happy) ->  If sad: "Would you like help" button
       // That would call help endpoint -> (could be little slide up window, something like that to highlight OR dino says it?)
+
+      // ================================================ Mood
+      const mood = await get_mood(inputText);
+      if (mood == 1) {
+        // navigate to modal
+        navigateToModal();
+      }
       const text2 = await get_response(inputText, personalities[id]);
-      setResponseText(text2)
+      setResponseText(text2);
       if (audio_mode == "villager") {
         await playSound();
       } else if (audio_mode == "model") {
-        Speech.speak(text2)
+        Speech.speak(text2);
       }
     } else {
       await startRecording();
@@ -299,14 +317,14 @@ export default function JournalScreen() {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <ChatBubble
-          isOwnMessage={true}
-          bubbleColor='#ffffff'
-          tailColor='#ffffff'
-          withTail={true}
-          style = {{height:200, width:700, margin:5}}
-        >
-          <Text style = {{fontSize:18}}>{responseText}</Text>
-        </ChatBubble>
+            isOwnMessage={true}
+            bubbleColor="#ffffff"
+            tailColor="#ffffff"
+            withTail={true}
+            style={{ height: 200, width: 700, margin: 5 }}
+          >
+            <Text style={{ fontSize: 18 }}>{responseText}</Text>
+          </ChatBubble>
         </View>
 
         <View style={styles.imgContainer}>
@@ -361,7 +379,7 @@ const styles = StyleSheet.create({
     flex: 3,
     margin: 30,
     backgroundColor: "rgba(52, 52, 52, 0)",
-    flexDirection: 'column-reverse',
+    flexDirection: "column-reverse",
     // justifyContent: 'flex-start',
   },
   imgContainer: {
