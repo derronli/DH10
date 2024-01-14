@@ -24,10 +24,10 @@ function TabBarIconMain(props: {
       width: 55,  // Adjust the width and height to set the size of the circle
       height: 65,
       borderRadius: 30,  // Half of the width/height to make it a circle
-      backgroundColor: '#fff',  // Set the background color of the circle
+      backgroundColor: '#fc3232',  // Set the background color of the circle
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 50
+      marginBottom: 40
     }}>
       <FontAwesome size={45} style={{ marginBottom: 5 }} {...props} />
     </View>
@@ -60,7 +60,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Journal',
-          tabBarIcon: ({ color, size }) => <TabBarIconMain name="home" color={color}/>,
+          tabBarIcon: ({ color, size }) => <TabBarIconMain name="home" color={color} />,
           tabBarLabelStyle: { fontSize: 18 },
           headerRight: () => (
             <Link href="/modal" asChild>
