@@ -9,7 +9,7 @@ export default function TabTwoScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { id = 0, other } = params as { id?: number; other?: any };
+  const { id = 0} = params as { id?: number};
 
   const pics = [
     require("../../assets/images/dino0.png"),

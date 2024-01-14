@@ -52,7 +52,7 @@ export default function TabTwoScreen() {
         </Text>
         <Link
           href={{
-            pathname: "/five",
+            pathname: "/",
             // /* 1. Navigate to the details route with query params */
             params: { id: index, other: "blah" },
           }}
