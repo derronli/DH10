@@ -3,17 +3,33 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Text } from "../../components/Themed";
 import { Image, Button, TouchableOpacity, View } from "react-native";
 import ActionableItem from "../../components/ActionableItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // THIS IS ACTIONABLES SCREEN =========================================================================
 export default function TabTwoScreen() {
+  useEffect(() => {
+    getData();
+  }, []);
+
   const [actionItems, setActionItems] = useState<string[]>([
     "Wash the dishes",
     "Clean my room",
     "Eat food",
     "Do Homework :(",
   ]);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("my-key");
+      if (value !== null) {
+        setActionItems((actionItems) => [...actionItems, value]);
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
 
   const handleBtnPress = (txt) => {
     let cp = [...actionItems];

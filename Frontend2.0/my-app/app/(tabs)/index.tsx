@@ -1,4 +1,4 @@
-import { get_summary } from "../../models/llm_call";
+import { get_actions, get_summary } from "../../models/llm_call";
 import {
   Image,
   TextInput,
@@ -22,6 +22,7 @@ export default function JournalScreen() {
   const [audioPermission, setAudioPermission] = useState<boolean | null>(null);
   const [inputText, setInputText] = useState("");
   const [summCounter, setSummCounter] = useState(0);
+  const [actions, setActions] = useState<string[]>([]);
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -170,6 +171,14 @@ export default function JournalScreen() {
 
     console.log("Done.");
   };
+  const storeActionData = async (value: string) => {
+    try {
+      await AsyncStorage.setItem("my-key", value);
+    } catch (e) {
+      // saving error
+    }
+  };
+
   const storeData = async (value: string) => {
     try {
       await AsyncStorage.setItem(`summaryNote${summCounter}`, value);
@@ -191,6 +200,15 @@ export default function JournalScreen() {
       console.log(text);
       storeData(text);
       setInputText("");
+      // 3 endpoints -> actions, mood, help
+      // actions can be put on a different page -> (get action items button) -> Input: summarized text
+      console.log("ACTIONABLES");
+      const ac = await get_actions(inputText);
+      console.log(ac);
+      storeActionData(ac);
+
+      // Mood -> can be detected from the voice -> Output integer 1(sad) or 5 (happy) ->  If sad: "Would you like help" button
+      // That would call help endpoint -> (could be little slide up window, something like that to highlight OR dino says it?)
     } else {
       await startRecording();
     }
