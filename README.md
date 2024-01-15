@@ -1,7 +1,7 @@
 # DH10 Submission - DinoMind
 DinoMind is your friendly dino companion who will help you journal your day and create to-do items to make sure you slay the next day!   
 
-🏆Winner of Best Health Hack  
+🏆Winner of Best Health Hack - DeltaHacks 2024  
 📹[Demo here](https://devpost.com/software/dinomind)
 
 ## Prerequisites
